@@ -1,8 +1,13 @@
 package com.kamerrezz.zoneroyale;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.network.chat.Component;
@@ -68,6 +73,7 @@ public class BattleRoyaleManager {
             setupWorldBorder(level);
         }
 
+        showTitleToAll("§6¡BATTLE ROYALE!", "§a¡Que tengan una buena partida!");
         broadcastMessage("¡Battle Royale iniciado! Jugadores: " + allPlayers.size());
         broadcastMessage("Radio inicial: " + (int)currentRadius + " bloques");
     }
@@ -216,6 +222,8 @@ public class BattleRoyaleManager {
             ServerPlayer winner = alivePlayers.get(0);
             broadcastMessage("¡¡¡" + winner.getName().getString() + " ha ganado el Battle Royale!!!");
             broadcastMessage("¡Felicidades por ser el último superviviente!");
+            showTitle(winner, "§6¡VICTORIA!", "§eEres el último superviviente");
+            winner.playNotifySound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
             stopGame();
         } else if (alivePlayers.isEmpty()) {
             broadcastMessage("¡Empate! Todos los jugadores fueron eliminados.");
@@ -228,6 +236,21 @@ public class BattleRoyaleManager {
         if (server != null) {
             Component chatMessage = Component.literal("§6[Zone Royale] §f" + message);
             server.getPlayerList().broadcastSystemMessage(chatMessage, false);
+        }
+    }
+
+    private void showTitle(ServerPlayer player, String title, String subtitle) {
+        player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 20));
+        player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(title)));
+        player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(subtitle)));
+    }
+
+    private void showTitleToAll(String title, String subtitle) {
+        MinecraftServer server = getServer();
+        if (server != null) {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                showTitle(player, title, subtitle);
+            }
         }
     }
 

@@ -44,10 +44,10 @@ public class ZoneRoyaleCommands {
         }
 
         manager.startGame();
-        context.getSource().sendSuccess(
-                () -> Component.literal("§a¡Battle Royale iniciado exitosamente!"),
-                true
-        );
+//        context.getSource().sendSuccess(
+//                () -> Component.literal("§a¡Battle Royale iniciado exitosamente!"),
+//                true
+//        );
         return 1;
     }
 
