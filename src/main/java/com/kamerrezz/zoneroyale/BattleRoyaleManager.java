@@ -13,6 +13,9 @@ import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.*;
@@ -73,6 +76,7 @@ public class BattleRoyaleManager {
             setupWorldBorder(level);
         }
 
+        hidePlayerNametags();
         showTitleToAll("§6¡BATTLE ROYALE!", "§a¡Que tengan una buena partida!");
         broadcastMessage("¡Battle Royale iniciado! Jugadores: " + allPlayers.size());
         broadcastMessage("Radio inicial: " + (int)currentRadius + " bloques");
@@ -92,6 +96,7 @@ public class BattleRoyaleManager {
             }
         }
 
+        showPlayerNametags();
         broadcastMessage("Battle Royale terminado!");
     }
 
@@ -251,6 +256,46 @@ public class BattleRoyaleManager {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 showTitle(player, title, subtitle);
             }
+        }
+    }
+
+    private void hidePlayerNametags() {
+        MinecraftServer server = getServer();
+        if (server == null) return;
+
+        ServerLevel level = server.getLevel(Level.OVERWORLD);
+        if (level == null) return;
+
+        Scoreboard scoreboard = level.getScoreboard();
+
+        PlayerTeam team = scoreboard.getPlayerTeam("battleRoyaleTeam");
+        if (team == null) {
+            team = scoreboard.addPlayerTeam("battleRoyaleTeam");
+        }
+
+        team.setNameTagVisibility(Team.Visibility.NEVER);
+
+        for (ServerPlayer player : alivePlayers) {
+            scoreboard.addPlayerToTeam(player.getScoreboardName(), team);
+        }
+    }
+
+    private void showPlayerNametags() {
+        MinecraftServer server = getServer();
+        if (server == null) return;
+
+        ServerLevel level = server.getLevel(Level.OVERWORLD);
+        if (level == null) return;
+
+        Scoreboard scoreboard = level.getScoreboard();
+
+        PlayerTeam team = scoreboard.getPlayerTeam("battleRoyaleTeam");
+        if (team != null) {
+            for (String playerName : new ArrayList<>(team.getPlayers())) {
+                scoreboard.removePlayerFromTeam(playerName, team);
+            }
+
+            scoreboard.removePlayerTeam(team);
         }
     }
 
