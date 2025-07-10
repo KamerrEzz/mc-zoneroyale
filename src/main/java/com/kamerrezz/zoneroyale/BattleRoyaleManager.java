@@ -32,7 +32,7 @@ public class BattleRoyaleManager {
     private int centerX = 0;
     private int centerZ = 0;
     private double currentRadius = 1000;
-    private double targetRadius = 50;
+    private double targetRadius = 10;
 
     // Timer para reducir zona
     private int shrinkTimer = 0;
@@ -207,8 +207,9 @@ public class BattleRoyaleManager {
         // Reducir gradualmente durante 20 segundos
         border.lerpSizeBetween(border.getSize(), currentRadius * 2, 20000);
 
-        broadcastMessage("¡La zona se está reduciendo! Nuevo radio: " + (int)currentRadius + " bloques");
-        broadcastMessage("Tienes 20 segundos para moverte a la zona segura!");
+//        broadcastMessage("¡La zona se está reduciendo! Nuevo radio: " + (int)currentRadius + " bloques");
+//        broadcastMessage("Tienes 20 segundos para moverte a la zona segura!");
+        showTitleToAll("¡La zona se está reduciendo!", "Tienes 20 segundos para moverte a la zona segura!");
     }
 
     public void onPlayerDeath(ServerPlayer player) {
@@ -226,9 +227,10 @@ public class BattleRoyaleManager {
         if (alivePlayers.size() == 1) {
             ServerPlayer winner = alivePlayers.get(0);
             broadcastMessage("¡¡¡" + winner.getName().getString() + " ha ganado el Battle Royale!!!");
-            broadcastMessage("¡Felicidades por ser el último superviviente!");
+//            broadcastMessage("¡Felicidades por ser el último superviviente!");
             showTitle(winner, "§6¡VICTORIA!", "§eEres el último superviviente");
             winner.playNotifySound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
+            showPlayerNametags();
             stopGame();
         } else if (alivePlayers.isEmpty()) {
             broadcastMessage("¡Empate! Todos los jugadores fueron eliminados.");
