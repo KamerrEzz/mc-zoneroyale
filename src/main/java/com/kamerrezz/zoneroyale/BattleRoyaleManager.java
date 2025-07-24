@@ -243,6 +243,34 @@ public class BattleRoyaleManager {
         }
     }
 
+    private void teleportAllToWinner(ServerPlayer winner) {
+        MinecraftServer server = getServer();
+        if (server == null) return;
+
+        ServerLevel level = winner.serverLevel();
+        BlockPos winnerPos = winner.blockPosition();
+
+        List<ServerPlayer> allPlayers = server.getPlayerList().getPlayers();
+
+        for (ServerPlayer player : allPlayers) {
+            if (player != winner) {
+                BlockPos teleportPos = findSafeTeleportPosition(level, winnerPos, allPlayers.indexOf(player));
+                player.teleportTo(level, teleportPos.getX() + 0.5, teleportPos.getY(), teleportPos.getZ() + 0.5, 0, 0);
+            }
+        }
+    }
+
+    private BlockPos findSafeTeleportPosition(ServerLevel level, BlockPos center, int playerIndex) {
+        double angle = (playerIndex * 2 * Math.PI) / 8; // Máximo 8 posiciones
+        double radius = 3 + (playerIndex / 8) * 2; // Radio aumenta con más jugadores
+
+        int x = center.getX() + (int)(Math.cos(angle) * radius);
+        int z = center.getZ() + (int)(Math.sin(angle) * radius);
+
+        BlockPos targetPos = new BlockPos(x, center.getY(), z);
+        return findSafeSpawnPosition(level, targetPos);
+    }
+
     private void broadcastMessage(String message) {
         MinecraftServer server = getServer();
         if (server != null) {
