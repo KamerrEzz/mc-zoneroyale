@@ -207,9 +207,9 @@ public class BattleRoyaleManager {
         // Reducir gradualmente durante 20 segundos
         border.lerpSizeBetween(border.getSize(), currentRadius * 2, 20000);
 
-//        broadcastMessage("¡La zona se está reduciendo! Nuevo radio: " + (int)currentRadius + " bloques");
-//        broadcastMessage("Tienes 20 segundos para moverte a la zona segura!");
-        showTitleToAll("¡La zona se está reduciendo!", "Tienes 20 segundos para moverte a la zona segura!");
+        broadcastMessage("¡La zona se está reduciendo! Nuevo radio: " + (int)currentRadius + " bloques");
+        broadcastMessage("Tienes 20 segundos para moverte a la zona segura!");
+//        showTitleToAll("¡La zona se está reduciendo!", "Tienes 20 segundos para moverte a la zona segura!");
     }
 
     public void onPlayerDeath(ServerPlayer player) {
@@ -225,7 +225,7 @@ public class BattleRoyaleManager {
 
         player.setGameMode(GameType.SPECTATOR);
         broadcastMessage(player.getName().getString() + " ha sido eliminado! Jugadores restantes: " + alivePlayers.size());
-//        checkWinCondition();
+        checkWinCondition();
     }
 
     private void checkWinCondition() {
