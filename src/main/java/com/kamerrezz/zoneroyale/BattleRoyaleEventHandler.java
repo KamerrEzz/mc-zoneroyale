@@ -6,6 +6,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class BattleRoyaleEventHandler {
@@ -17,11 +18,16 @@ public class BattleRoyaleEventHandler {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(LivingDeathEvent event) {
+        BattleRoyaleManager manager = BattleRoyaleManager.getInstance();
         // Verificar si es un jugador del servidor
         if (event.getEntity() instanceof ServerPlayer player) {
-            BattleRoyaleManager.getInstance().onPlayerDeath(player);
+            if (manager.isGameActive() && manager.getAlivePlayers().contains(player)) {
+                event.setCanceled(true);
+                player.setHealth(1.0f);
+                manager.onPlayerDeath(player);
+            }
         }
     }
 

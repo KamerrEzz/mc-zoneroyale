@@ -218,9 +218,14 @@ public class BattleRoyaleManager {
         }
         alivePlayers.remove(player);
         deadPlayers.add(player);
+
+        if (player.getHealth() <= 0) {
+            player.setHealth(1.0f);
+        }
+
         player.setGameMode(GameType.SPECTATOR);
         broadcastMessage(player.getName().getString() + " ha sido eliminado! Jugadores restantes: " + alivePlayers.size());
-        checkWinCondition();
+//        checkWinCondition();
     }
 
     private void checkWinCondition() {
