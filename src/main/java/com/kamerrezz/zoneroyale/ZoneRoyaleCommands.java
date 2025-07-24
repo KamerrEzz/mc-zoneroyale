@@ -13,7 +13,7 @@ public class ZoneRoyaleCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("zoneroyale")
-//                .requires(source -> source.hasPermission(2)) // Requiere permisos de operador (nivel 2)
+                .requires(source -> source.hasPermission(2)) // Requiere permisos de operador (nivel 2)
                 .then(Commands.literal("start")
                         .executes(ZoneRoyaleCommands::startGame)
                 )
